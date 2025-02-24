@@ -1,7 +1,6 @@
 """Microbenchmarking for CPU offloading"""
 import argparse
 import os
-# import random
 import torch
 
 from data import load_data_text
@@ -17,10 +16,9 @@ if __name__ == "__main__":
 
     logging.basicConfig(
         format="%(asctime)s %(levelname)s [%(name)s] %(message)s", level=logging.INFO, datefmt="%Y-%m-%d %H:%M:%S"
-    ) #, filename='prediction.log'
+    )
 
     parser = argparse.ArgumentParser()
-    # os.chdir("mixtral_offloading")
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
     parser.add_argument(
@@ -61,35 +59,14 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    # path_json = home_directory + "/MoE_Infer/data/ShareGPT_V3_unfiltered_cleaned_split.json"
-    # with open(path_json, "r") as f:
-    #     data = json.load(f)
-    # texts = []
-    # for d in data:
-    #     if len(d["conversations"]) == 0:
-    #         continue
-    #     # the input of the first round
-    #     texts.append(" ".join(d["conversations"][0]["value"].split()))
-    # random.seed(0)
-    # random.shuffle(texts)
-
-    # path_json = home_directory + "/MoE_Infer/data/ShareGPT_V3_filtered_shuffled.json"
-    # n_samples = 1024
-    # with open(path_json, "r") as f:
-    #     texts = json.load(f)
-    # texts = random.sample(texts, k=min(n_samples, len(texts)))
-
-    data_set = load_data_text(args.dataset_name, n_samples=102400)
+    data_set = load_data_text(args.dataset_name, n_samples=1024)
     model = FiddlerMixtral(args.model, args.attn_implementation, args.cpu_offload, args.proportion_gpu)
     model._model.eval()
     n_sample = args.num_samples
 
-    for input_token in [256]:#[64, 128, 256]: [1024, 2048, 4096, 8192, 16384]
-        for output_token in [256]:#[128, 256, 512]: [64, 256, 1024, 4096, 16384]
-            # if output_token > 2 * input_token:
-            #     continue
+    for input_token in [256]:
+        for output_token in [256]:
             idx_text = 0
-            # prefill_time_sum, decode_time_sum, hit_rate_sum = 0, 0, 0
             time_count = 0
             token_count = 0
             for sample_i in range(n_sample):
@@ -111,14 +88,7 @@ if __name__ == "__main__":
                     min_new_tokens=output_token,
                     pad_token_id=model.tokenizer.pad_token_id, 
                     use_cache=True,
-                    # do_sample=False,
-                    ############
-                    # do_sample=True,
-                    # temperature=0.9,
-                    # top_p=0.9,
-                    #########
-                    num_beams=5,  # Number of beams
-                    early_stopping=True,  # Stops early if all beams produce EOS
+                    do_sample=False,
                 )
                 
                 torch.cuda.synchronize()
@@ -126,16 +96,6 @@ if __name__ == "__main__":
                 time_count += end - start
                 token_count += output_token
                 prediction_text = model.tokenizer.decode(outputs_ids[0])
-                # print('Output:', prediction_text)
-                # print(f"{idx_text, len(model.layer_noe_count[0]), len(model.layer_noe_count[1]), len(model.layer_noe_count[2])}")
-                # for option_i in range(3):
-                #     print(f"{option_i, model.layer_type_count[option_i]}, layer_noe: {np.average(model.layer_noe_count[option_i])}, layer_e: {np.average(model.layer_e_count[option_i])}")
-                #     # input()
-
-                # print((f"{sample_i}-{input_token}-{output_token}-"
-                #        f"{model._model.model.kv_cache['prefill']}-"
-                #        f"{'-'.join(model._model.model.kv_cache[term_num] for term_num in model._model.model.term_num_list)}"))
-                # re-initialization
                 model._model.model.initialize_info()
 
             print(

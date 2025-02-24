@@ -137,7 +137,7 @@ def eval(model, model_name, num_samples):
     import time
 
     device = torch.device("cuda:0")
-    texts = load_data_text('sharegpt', n_samples=4096)
+    texts = load_data_text('sharegpt', n_samples=1024)
     logging.info(f'n of input {len(texts)}')
     n_sample = num_samples
 

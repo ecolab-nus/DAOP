@@ -6,7 +6,7 @@ from datasets import Dataset, load_dataset, Features, Value, Sequence
 
 import re
 
-seed_setting = 0
+seed_setting = 1000
 random.seed(seed_setting)
 np.random.seed(seed_setting)
 
@@ -260,7 +260,7 @@ def load_data(logger, dataset_name, tokenizer, max_new_tokens, n_samples=128):
     return dataset
 
 
-def load_data_text(dataset_name, n_samples=102400):
+def load_data_text(dataset_name, n_samples=1024):
     raw_data = DATASETS[dataset_name]()
     # print(raw_data.features, len(raw_data))
     # input()
