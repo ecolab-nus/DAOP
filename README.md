@@ -2,7 +2,7 @@
 
 (This repository is a proof-of-concept and still under heavy construction)
 
-DAOP is an on-device MoE inference engine to optimize parallel GPU-CPU execution. DAOP dynamically allocates experts between CPU and GPU based on per-sequence activation patterns, and selectively pre-calculates predicted experts on CPUs to minimize transfer latency. This approach enables efficient resource utilization across various expert cache ratios while maintaining model accuracy through a novel graceful degradation mechanism. Comprehensive evaluations across various datasets show that DAOP outperforms traditional expert caching and prefetching methods by up to 8.20$\times$ and offloading techniques by 1.35$\times$ while maintaining accuracy. It allows you to run **unquantized Mixtral-8x7B model (>90GB of parameters) with >4.5 token/s and unquantized Phi-3.5 MoE model (>80GB of parameters) with >8.2 token/s on a single A6000 GPU**.
+DAOP is an on-device MoE inference engine to optimize parallel GPU-CPU execution. DAOP dynamically allocates experts between CPU and GPU based on per-sequence activation patterns, and selectively pre-calculates predicted experts on CPUs to minimize transfer latency. This approach enables efficient resource utilization across various expert cache ratios while maintaining model accuracy through a novel graceful degradation mechanism. It allows you to run **unquantized Mixtral-8x7B model (>90GB of parameters) with >4.5 token/s and unquantized Phi-3.5 MoE model (>80GB of parameters) with >8.2 token/s on a single A6000 GPU**.
 
 ## Update
 - [2024/12] We published an [arxiv preprint](https://arxiv.org/abs/2402.07033)
