@@ -1,0 +1,2 @@
+from .modeling import Fast_MixtralModel, Fast_PhiMoEModel
+from .modeling_fiddler import Fiddler_MixtralModel, Fiddler_PhiMoEModel
