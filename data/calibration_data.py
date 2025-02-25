@@ -24,13 +24,14 @@ latency_a100 = {'small': (5, 40), 'phi': (2.5, 25), 'big': (16, 86)} # latency_c
 latency_a6000 = {'small': (8.5, 210), 'phi': (3.5, 30), 'big': (0, 0)}
 latency_mi100 = {'small': (96, 21), 'big': (167, 45)}
 
-latency_cpu = 8.5
-latency_gpu = 210
-cache_directory = "/home/yujie/.cache/huggingface/hub/"
-
+##### Model-specific Parameters #####
+latency_cpu = 3.5
+latency_gpu = 30
+largest_num = 8
 designated_cache_size = 240
+
+cache_directory = "/home/yujie/.cache/huggingface/hub/"
 swap_in_out = 1.05
-largest_num = 4
 first_predict_layer = 5
 
 popular_experts_small = decoding_experts_small_sharegpt

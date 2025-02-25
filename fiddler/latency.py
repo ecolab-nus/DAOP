@@ -2,12 +2,24 @@
 import argparse
 import os
 import torch
-
 from data import load_data_text
-
 from fiddler.fiddler_mixtral import FiddlerMixtral
 import logging
 import time
+
+
+def trial_running(tokenizer, dev_map, _model):
+    # first round testing to remove memory copy overhead ? 
+    test_inputs = tokenizer.encode("This running is only for a test.", return_tensors="pt").to(dev_map)
+    _model.generate(
+        input_ids=test_inputs, 
+        max_new_tokens=32,
+        min_new_tokens=32,
+        pad_token_id=tokenizer.pad_token_id,
+        use_cache=True,
+        do_sample=False,
+    )
+
 
 if __name__ == "__main__":
 
@@ -63,6 +75,7 @@ if __name__ == "__main__":
     model = FiddlerMixtral(args.model, args.attn_implementation, args.cpu_offload, args.proportion_gpu)
     model._model.eval()
     n_sample = args.num_samples
+    trial_running(model.tokenizer, model._device, model._model)
 
     for input_token in [256]:
         for output_token in [256]:

@@ -1,5 +1,4 @@
 """Microbenchmarking for CPU offloading"""
-
 import argparse
 import os
 import torch
@@ -7,6 +6,20 @@ import time
 from data import load_data_text
 import logging
 from ondemand_mixtral import DemandMixtral
+
+
+def trial_running(tokenizer, dev_map, _model):
+    # first round testing to remove memory copy overhead ? 
+    test_inputs = tokenizer.encode("This running is only for a test.", return_tensors="pt").to(dev_map)
+    _model.generate(
+        input_ids=test_inputs, 
+        max_new_tokens=32,
+        min_new_tokens=32,
+        pad_token_id=tokenizer.pad_token_id,
+        use_cache=True,
+        do_sample=False,
+    )
+
 
 if __name__ == "__main__":
 
@@ -56,6 +69,7 @@ if __name__ == "__main__":
     model = DemandMixtral(args.model, args.attn_implementation, args.proportion_gpu)
     model._model.eval()
     n_sample = args.num_samples
+    trial_running(model.tokenizer, model._device, model._model)
 
     for input_token in [256]:
         for output_token in [256]:

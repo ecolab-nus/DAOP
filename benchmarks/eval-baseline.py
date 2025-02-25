@@ -11,8 +11,8 @@ sys.path.append("mixtral_offloading")
 from data import load_data_text, cache_directory
 
 model_path = {
-    'mistralai/Mixtral-8x7B-v0.1': "models--mistralai--Mixtral-8x7B-v0.1/snapshots/985aa055896a8f943d4a9f2572e6ea1341823841",
-    'microsoft/Phi-3.5-MoE-instruct': "models--microsoft--Phi-3.5-MoE-instruct/snapshots/ae6cb90aceffd86d1e3fba55c59ec62dfc88d4a1",
+    'mistralai/Mixtral-8x7B-v0.1': "models--mistralai--Mixtral-8x7B-v0.1/snapshots/ffe1a706bacbd5abddc5ff99432ee38f7e0662fb",
+    'microsoft/Phi-3.5-MoE-instruct': "models--microsoft--Phi-3.5-MoE-instruct/snapshots/96bbd8798b3f6f36fe07cd0a28653a186403cb48",
 }
 offload_experts_a6000 = {
     'mistralai/Mixtral-8x7B-v0.1': 5,
@@ -20,7 +20,6 @@ offload_experts_a6000 = {
 }
 
 def main():
-    # os.chdir("mixtral_offloading")
     if args.framework == 'mixtral-offloading':
         logging.info('Using mixtral-offloading')
         model = init_mixtral_offload(args.model)
