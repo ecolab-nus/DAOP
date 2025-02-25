@@ -96,11 +96,10 @@ if __name__ == "__main__":
                 time_count += end - start
                 token_count += output_token
                 prediction_text = model.tokenizer.decode(outputs_ids[0])
-                model._model.model.initialize_info()
 
             print(
                 f"model: {args.model}, dataset: {args.dataset_name}, attn_implementation: {args.attn_implementation}, cpu_offload: {args.cpu_offload}, proportion_gpu: {args.proportion_gpu}, num_samples: {args.num_samples}, "
                 f"input_token: {input_token}, output_token: {output_token}, "
                 f"{token_count / (time_count):.2f} token/s, "
-                # f"sample output: {len(outputs_ids[0]), prediction_text}"
+                f"sample output: {len(outputs_ids[0]), prediction_text}"
             )

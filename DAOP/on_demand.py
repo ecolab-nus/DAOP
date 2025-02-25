@@ -76,7 +76,6 @@ if __name__ == "__main__":
                 start = time.time()
 
                 outputs_ids = model._model.generate(
-                    # **context,
                     input_ids=input_ids[:, :input_token],
                     max_new_tokens=output_token,
                     min_new_tokens=output_token,
@@ -95,5 +94,5 @@ if __name__ == "__main__":
                 f"model: {args.model}, dataset: {args.dataset_name}, attn_implementation: {args.attn_implementation}, proportion_gpu: {args.proportion_gpu}, num_samples: {args.num_samples}, "
                 f"input_token: {input_token}, output_token: {output_token}, "
                 f"{token_count / (time_count):.2f} token/s, "
-                # f"sample output: {len(outputs_ids[0]), prediction_text}"
+                f"sample output: {len(outputs_ids[0]), prediction_text}"
             )
