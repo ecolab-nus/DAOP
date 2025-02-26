@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    data_set = load_data_text(args.dataset_name, n_samples=1024)
+    data_set = load_data_text(args.dataset_name, n_samples=4096)
     model = DemandMixtral(args.model, args.attn_implementation, args.proportion_gpu)
     model._model.eval()
     n_sample = args.num_samples
