@@ -275,19 +275,19 @@ if __name__ == "__main__":
     )
     for i in [1, 2, 4, 8,]:# 16, 32, 64, 128, 256]:
         print(
-            f"\n5) Expert execution, GPU batch={i}\n{format_output(expert_gpu(model, gate_in_features=gate_in_features, batch_size=i))}"
+            f"5) Expert execution, GPU batch={i}\n{format_output(expert_gpu(model, gate_in_features=gate_in_features, batch_size=i))}"
         )
     for i in [1, 2, 4, 8,]:# 16, 32, 64, 128, 256]:
         print(
-            f"\n6) Expert execution, CPU batch={i}\n{format_output(expert_cpu(model, gate_in_features=gate_in_features, batch_size=i))}"
+            f"6) Expert execution, CPU batch={i}\n{format_output(expert_cpu(model, gate_in_features=gate_in_features, batch_size=i))}"
         )
     for i in [1, 2, 4, 8, 16, 32, 64, 128, 256]:
         print(
-            f"\n7) Attention execution, GPU seq_len={i}\n{format_output(atten_gpu(model, attn_in_features=attn_in_features, seq_len=i, batch_size=1))}"
+            f"7) Attention execution, GPU seq_len={i}\n{format_output(atten_gpu(model, attn_in_features=attn_in_features, seq_len=i, batch_size=1))}"
         )
     for i in [1, 2, 4, 8, 16, 32, 64, 128, 256]:
         print(
-            f"\n8) Attention execution, CPU seq_len={i}\n{format_output(atten_cpu(model, attn_in_features=attn_in_features, seq_len=i, batch_size=1))}"
+            f"8) Attention execution, CPU seq_len={i}\n{format_output(atten_cpu(model, attn_in_features=attn_in_features, seq_len=i, batch_size=1))}"
         )
 
     # # Signal the temperature logging process to stop

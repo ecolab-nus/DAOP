@@ -259,7 +259,7 @@ def load_data(logger, dataset_name, tokenizer, max_new_tokens, n_samples=128):
     return dataset
 
 
-def load_data_text(dataset_name, n_samples=1024):
+def load_data_text(dataset_name, n_samples=4096):
     raw_data = DATASETS[dataset_name]()
     # print(raw_data.features, len(raw_data))
     # input()
