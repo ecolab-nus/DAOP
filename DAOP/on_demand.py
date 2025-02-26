@@ -69,7 +69,7 @@ if __name__ == "__main__":
     model = DemandMixtral(args.model, args.attn_implementation, args.proportion_gpu)
     model._model.eval()
     n_sample = args.num_samples
-    trial_running(model.tokenizer, model._device, model._model)
+    # trial_running(model.tokenizer, model._device, model._model)
 
     for input_token in [256]:
         for output_token in [256]:
