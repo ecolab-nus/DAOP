@@ -5,7 +5,7 @@ import os
 from datasets import Dataset, load_dataset, Features, Value, Sequence
 import re
 
-seed_setting = 0
+seed_setting = 1000
 random.seed(seed_setting)
 np.random.seed(seed_setting)
 
