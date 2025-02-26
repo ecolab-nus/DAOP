@@ -84,13 +84,13 @@ class DemandMixtral:
             # only model.layers[i].block_sparse_moe.experts is on CPU
 
     def set_expert_loc(self, n_expert_on_gpu, popular_experts=None):
-        """Set the location of experts"""
+    """Set the location of experts"""
         if popular_experts is None:
             # list of (i_layer, i_expert) in the order of popularity determined based on profile
-            popular_experts = []        
+            popular_experts = []
+
         sign_experts = {}
         supplement_cache_num = 0
-
         layer_cache = (n_expert_on_gpu - supplement_cache_num) // self.n_layer
         # Distribute popular experts to layers until the layer's cache limit is reached
         if layer_cache >= 1:
@@ -98,12 +98,13 @@ class DemandMixtral:
                 cache_count = 0
                 for i, (i_layer, i_expert) in enumerate(popular_experts):
                     if i_layer == layer_index and i not in sign_experts:
-                        self.expert_loc[i_layer, i_expert] = 1
-                        sign_experts[i] = True
-                        cache_count += 1
-                        supplement_cache_num += 1
                         if cache_count >= layer_cache:
                             break
+                        else:
+                            self.expert_loc[i_layer, i_expert] = 1
+                            sign_experts[i] = True
+                            cache_count += 1
+                            supplement_cache_num += 1
         
         # Handle any remaining experts if they have not been placed and there is still capacity
         cur_experts = supplement_cache_num

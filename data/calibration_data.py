@@ -29,6 +29,7 @@ latency_cpu = 3.5
 latency_gpu = 30
 largest_num = 8
 designated_cache_size = 240
+#####################################
 
 cache_directory = "/home/yujie/.cache/huggingface/hub/"
 swap_in_out = 1.05

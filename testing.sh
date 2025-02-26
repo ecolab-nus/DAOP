@@ -16,8 +16,8 @@ free -h
 # Improved Performance for Heavy Workloads: If your program is CPU-bound and performs heavy computations, this approach ensures that the full core resources are dedicated to a single thread.
 # More Predictable Performance: Ideal for real-time or latency-sensitive applications.
 
-# taskset -c 0-17 python DAOP/latency.py --model mistralai/Mixtral-8x7B-v0.1 --dataset_name sharegpt --proportion_gpu 0.99 --num_samples 30
-# taskset -c 0-17 python fiddler/latency.py --model mistralai/Mixtral-8x7B-v0.1 --dataset_name sharegpt --proportion_gpu 0.99 --num_samples 30
+#taskset -c 0-17 python DAOP/latency.py --model mistralai/Mixtral-8x7B-v0.1 --dataset_name sharegpt --proportion_gpu 0.99 --num_samples 30
+#taskset -c 0-17 python fiddler/latency.py --model mistralai/Mixtral-8x7B-v0.1 --dataset_name sharegpt --proportion_gpu 0.99 --num_samples 30
 # taskset -c 0-17 python DAOP/on_demand.py --model mistralai/Mixtral-8x7B-v0.1 --dataset_name sharegpt --proportion_gpu 0.99 --num_samples 30
 
 taskset -c 0-17 python DAOP/latency.py --model microsoft/Phi-3.5-MoE-instruct --dataset_name sharegpt --proportion_gpu 0.99 --num_samples 30
