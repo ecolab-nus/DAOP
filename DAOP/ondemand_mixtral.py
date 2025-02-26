@@ -84,7 +84,7 @@ class DemandMixtral:
             # only model.layers[i].block_sparse_moe.experts is on CPU
 
     def set_expert_loc(self, n_expert_on_gpu, popular_experts=None):
-    """Set the location of experts"""
+        """Set the location of experts"""
         if popular_experts is None:
             # list of (i_layer, i_expert) in the order of popularity determined based on profile
             popular_experts = []
