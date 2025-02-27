@@ -4,15 +4,15 @@ import torch.nn.functional as F
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 from data import popular_experts_small, popular_experts_phi, popular_experts_big, designated_cache_size, cache_directory
-from model import Fiddler_MixtralModel, Fiddler_PhiMoEModel
+from model import Daop_MixtralModel, Daop_PhiMoEModel
 
 np.random.seed(0)
-torch.manual_seed(0)            # 为CPU设置随机种子s
+torch.manual_seed(0)            # 为CPU设置随机种子
 torch.cuda.manual_seed_all(0)   # 为所有GPU设置随机种子
 
 
-class FiddlerMixtral:
-    def __init__(self, model_name_or_path: str, attn_implementation: str, cpu_offload: int, proportion_gpu: int = 0.95):
+class DaopMoE:
+    def __init__(self, model_name_or_path: str, attn_implementation: str, proportion_gpu: int = 0.95):
         self.dtype = torch.bfloat16
         self._device = torch.device("cuda:0")
         
@@ -29,14 +29,14 @@ class FiddlerMixtral:
 
         self.lm_head = self._model.lm_head
         # self._model.generation_config.pad_token_id = self._model.generation_config.eos_token_id
-
+        
         if 'Phi' in model_name_or_path:
-            self._model.model = Fiddler_PhiMoEModel(self._model.model, config, cpu_offload)
-            print('Fiddler_PhiMoE Replacement Done!')
+            self._model.model = Daop_PhiMoEModel(self._model.model, config, self._device)
+            print('Fast_PhiMoE Replacement Done!')
             self.popular_experts = popular_experts_phi
         elif 'Mixtral' in model_name_or_path:
-            self._model.model = Fiddler_MixtralModel(self._model.model, config, cpu_offload)
-            print('Fiddler_Mixtral Replacement Done!')
+            self._model.model = Daop_MixtralModel(self._model.model, config, self._device)
+            print('Fast_Mixtral Replacement Done!')
             if '8x7B' in model_name_or_path:
                 self.popular_experts = popular_experts_small
             elif '8x22B' in model_name_or_path:
@@ -87,9 +87,32 @@ class FiddlerMixtral:
         if popular_experts is None:
             # list of (i_layer, i_expert) in the order of popularity determined based on profile
             popular_experts = []
-        for i in range(n_expert_on_gpu):
-            i_layer, i_expert = popular_experts[i]
-            self.expert_loc[i_layer, i_expert] = 1
+
+        sign_experts = {}
+        supplement_cache_num = 0
+        layer_cache = (n_expert_on_gpu - supplement_cache_num) // self.n_layer
+        # Distribute popular experts to layers until the layer's cache limit is reached
+        if layer_cache >= 1:
+            for layer_index in range(self.n_layer):
+                cache_count = 0
+                for i, (i_layer, i_expert) in enumerate(popular_experts):
+                    if i_layer == layer_index and i not in sign_experts:
+                        if cache_count >= layer_cache:
+                            break
+                        else:
+                            self.expert_loc[i_layer, i_expert] = 1
+                            sign_experts[i] = True
+                            cache_count += 1
+                            supplement_cache_num += 1
+        
+        # Handle any remaining experts if they have not been placed and there is still capacity
+        cur_experts = supplement_cache_num
+        for i, (i_layer, i_expert) in enumerate(popular_experts):
+            if cur_experts < n_expert_on_gpu and i not in sign_experts:
+                self.expert_loc[i_layer, i_expert] = 1
+                sign_experts[i] = True
+                cur_experts += 1
+
 
     def bring_expert_to_gpu(self):
         """Bring part of expert layers to GPU"""
@@ -97,8 +120,6 @@ class FiddlerMixtral:
             for j in range(self.n_expert):
                 if self.is_expert_in_gpu(i, j):
                     self.model_obj.layers[i].block_sparse_moe.experts[j].to(self._device)
-                # else: 
-                #     self.model_obj.layers[i].block_sparse_moe.experts[j].to("cpu")
 
 
     def is_expert_in_gpu(self, i_layer, i_expert):

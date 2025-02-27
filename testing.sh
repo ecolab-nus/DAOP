@@ -22,10 +22,10 @@ free -h
 # --physcpubind=0-17 binds to the first logical core of each physical core. Avoids resource contention by not using the second hyperthread. The process prefers to run on these cores, but the scheduler can move it if needed.
 # --localalloc: Ensures memory allocations are local to the NUMA node of the bound CPU cores. Minimizes memory latency by keeping memory accesses local.
 
-# numactl --physcpubind=0-17 --localalloc python DAOP/latency.py --model mistralai/Mixtral-8x7B-v0.1 --dataset_name sharegpt --proportion_gpu 0.99 --num_samples 30
-# numactl --physcpubind=0-17 --localalloc python fiddler/latency.py --model mistralai/Mixtral-8x7B-v0.1 --dataset_name sharegpt --proportion_gpu 0.99 --num_samples 30
+# numactl --physcpubind=0-17 --localalloc python DAOP/daop_infer.py --model mistralai/Mixtral-8x7B-v0.1 --dataset_name sharegpt --proportion_gpu 0.99 --num_samples 30
+# numactl --physcpubind=0-17 --localalloc python fiddler/fiddler_infer.py --model mistralai/Mixtral-8x7B-v0.1 --dataset_name sharegpt --proportion_gpu 0.99 --num_samples 30
 # numactl --physcpubind=0-17 --localalloc python DAOP/on_demand.py --model mistralai/Mixtral-8x7B-v0.1 --dataset_name sharegpt --proportion_gpu 0.99 --num_samples 30
 
-numactl --physcpubind=0-17 --localalloc python DAOP/latency.py --model microsoft/Phi-3.5-MoE-instruct --dataset_name sharegpt --proportion_gpu 0.99 --num_samples 30
-numactl --physcpubind=0-17 --localalloc python fiddler/latency.py --model microsoft/Phi-3.5-MoE-instruct --dataset_name sharegpt --proportion_gpu 0.99 --num_samples 30
+numactl --physcpubind=0-17 --localalloc python DAOP/daop_infer.py --model microsoft/Phi-3.5-MoE-instruct --dataset_name sharegpt --proportion_gpu 0.99 --num_samples 30
+numactl --physcpubind=0-17 --localalloc python fiddler/fiddler_infer.py --model microsoft/Phi-3.5-MoE-instruct --dataset_name sharegpt --proportion_gpu 0.99 --num_samples 30
 # numactl --physcpubind=0-17 --localalloc python DAOP/on_demand.py --model microsoft/Phi-3.5-MoE-instruct --dataset_name sharegpt --proportion_gpu 0.99 --num_samples 30

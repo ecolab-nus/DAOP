@@ -25,7 +25,7 @@ from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED, ALL_CO
 from data import latency_cpu, latency_gpu, swap_in_out, largest_num, first_predict_layer
 import heapq
 
-class Fast_MixtralModel(MixtralPreTrainedModel):
+class Daop_MixtralModel(MixtralPreTrainedModel):
     """
     Transformer decoder consisting of *config.num_hidden_layers* layers. Each layer is a [`MixtralDecoderLayer`]
 
@@ -756,7 +756,7 @@ class Fast_MixtralModel(MixtralPreTrainedModel):
 
 
 
-class Fast_PhiMoEModel(PhiMoEPreTrainedModel):
+class Daop_PhiMoEModel(PhiMoEPreTrainedModel):
     """
     Transformer decoder consisting of *config.num_hidden_layers* layers. Each layer is a [`PhiMoEDecoderLayer`]
 

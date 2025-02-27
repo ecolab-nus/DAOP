@@ -1,17 +1,18 @@
+
 import numpy as np
 import torch
 import torch.nn.functional as F
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 from data import popular_experts_small, popular_experts_phi, popular_experts_big, designated_cache_size, cache_directory
-from model import Fast_MixtralModel, Fast_PhiMoEModel
+from model import Fiddler_MixtralModel, Fiddler_PhiMoEModel
 
 np.random.seed(0)
 torch.manual_seed(0)            # 为CPU设置随机种子
 torch.cuda.manual_seed_all(0)   # 为所有GPU设置随机种子
 
 
-class FastMixtral:
+class DemandMoE:
     def __init__(self, model_name_or_path: str, attn_implementation: str, proportion_gpu: int = 0.95):
         self.dtype = torch.bfloat16
         self._device = torch.device("cuda:0")
@@ -29,14 +30,14 @@ class FastMixtral:
 
         self.lm_head = self._model.lm_head
         # self._model.generation_config.pad_token_id = self._model.generation_config.eos_token_id
-        
+
         if 'Phi' in model_name_or_path:
-            self._model.model = Fast_PhiMoEModel(self._model.model, config, self._device)
-            print('Fast_PhiMoE Replacement Done!')
+            self._model.model = Fiddler_PhiMoEModel(self._model.model, config, cpu_offload=0)
+            print('Fiddler_PhiMoE_Demand Replacement Done!')
             self.popular_experts = popular_experts_phi
         elif 'Mixtral' in model_name_or_path:
-            self._model.model = Fast_MixtralModel(self._model.model, config, self._device)
-            print('Fast_Mixtral Replacement Done!')
+            self._model.model = Fiddler_MixtralModel(self._model.model, config, cpu_offload=0)
+            print('Fiddler_Mixtral_Demand Replacement Done!')
             if '8x7B' in model_name_or_path:
                 self.popular_experts = popular_experts_small
             elif '8x22B' in model_name_or_path:
@@ -120,6 +121,8 @@ class FastMixtral:
             for j in range(self.n_expert):
                 if self.is_expert_in_gpu(i, j):
                     self.model_obj.layers[i].block_sparse_moe.experts[j].to(self._device)
+                # else: 
+                #     self.model_obj.layers[i].block_sparse_moe.experts[j].to("cpu")
 
 
     def is_expert_in_gpu(self, i_layer, i_expert):

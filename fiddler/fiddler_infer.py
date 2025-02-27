@@ -2,10 +2,10 @@
 import argparse
 import os
 import torch
-import time
 from data import load_data_text
+from fiddler.fiddler_moe import FiddlerMoE
 import logging
-from DAOP_mixtral import FastMixtral
+import time
 
 
 def trial_running(tokenizer, dev_map, _model):
@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     logging.basicConfig(
         format="%(asctime)s %(levelname)s [%(name)s] %(message)s", level=logging.INFO, datefmt="%Y-%m-%d %H:%M:%S"
-    ) 
+    )
 
     parser = argparse.ArgumentParser()
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -52,6 +52,13 @@ if __name__ == "__main__":
         help="attention implementation that the model works with",
     )
     parser.add_argument(
+        "--cpu_offload",
+        type=int,
+        default=1,
+        choices=[0, 1],
+        help="0: GPU-only (baseline), 1: fiddler.",
+    )
+    parser.add_argument(
         "--proportion_gpu",
         type=float, 
         default=0.95,
@@ -64,9 +71,8 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-
     data_set = load_data_text(args.dataset_name, n_samples=4096)
-    model = FastMixtral(args.model, args.attn_implementation, args.proportion_gpu)
+    model = FiddlerMoE(args.model, args.attn_implementation, args.cpu_offload, args.proportion_gpu)
     model._model.eval()
     n_sample = args.num_samples
     trial_running(model.tokenizer, model._device, model._model)
@@ -76,14 +82,14 @@ if __name__ == "__main__":
             idx_text = 0
             time_count = 0
             token_count = 0
-            for _ in range(n_sample):
+            for sample_i in range(n_sample):
                 while True:
                     text = data_set[idx_text]["prompt"]
                     idx_text += 1
                     if len(text.split()) >= input_token:
                         # enough input length
                         break
-
+                
                 input_ids = model.tokenizer.encode(text, return_tensors='pt').to(model._device)
                 
                 torch.cuda.synchronize()
@@ -105,7 +111,7 @@ if __name__ == "__main__":
                 prediction_text = model.tokenizer.decode(outputs_ids[0])
 
             print(
-                f"model: {args.model}, dataset: {args.dataset_name}, attn_implementation: {args.attn_implementation}, proportion_gpu: {args.proportion_gpu}, num_samples: {args.num_samples}, "
+                f"model: {args.model}, dataset: {args.dataset_name}, attn_implementation: {args.attn_implementation}, cpu_offload: {args.cpu_offload}, proportion_gpu: {args.proportion_gpu}, num_samples: {args.num_samples}, "
                 f"input_token: {input_token}, output_token: {output_token}, "
                 f"{token_count / (time_count):.2f} token/s, "
                 f"sample output: {len(outputs_ids[0]), prediction_text}"

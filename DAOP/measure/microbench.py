@@ -11,7 +11,7 @@ import subprocess
 import multiprocessing
 import datetime
 
-from DAOP.ondemand_mixtral import DemandMixtral
+from DAOP.ondemand_moe import DemandMoE
 
 testing_expert_num = 1
 
@@ -240,7 +240,7 @@ if __name__ == "__main__":
     # temp_process = multiprocessing.Process(target=temperature_logger, args=(log_file, interval, stop_event))
     # temp_process.start()
 
-    model = DemandMixtral(model_name_or_path=args.model, attn_implementation=None, proportion_gpu=0.2)
+    model = DemandMoE(model_name_or_path=args.model, attn_implementation=None, proportion_gpu=0.2)
 
     gate_in_features = model.model_obj.layers[0].block_sparse_moe.gate.in_features
     experts_j = torch.randint(0, model.n_expert, (testing_expert_num,))

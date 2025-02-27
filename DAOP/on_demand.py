@@ -5,7 +5,7 @@ import torch
 import time
 from data import load_data_text
 import logging
-from ondemand_mixtral import DemandMixtral
+from DAOP.ondemand_moe import DemandMoE
 
 
 def trial_running(tokenizer, dev_map, _model):
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     data_set = load_data_text(args.dataset_name, n_samples=4096)
-    model = DemandMixtral(args.model, args.attn_implementation, args.proportion_gpu)
+    model = DemandMoE(args.model, args.attn_implementation, args.proportion_gpu)
     model._model.eval()
     n_sample = args.num_samples
     # trial_running(model.tokenizer, model._device, model._model)
