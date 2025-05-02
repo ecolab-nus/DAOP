@@ -27,8 +27,8 @@ latency_mi100 = {'small': (96, 21), 'big': (167, 45)}
 ##### Model-specific Parameters #####
 latency_cpu = 3.5
 latency_gpu = 30
-largest_num = 8
-designated_cache_size = 240
+largest_num = 8   # half of the number of experts for each transformer layer
+designated_cache_size = 240   # expert cache size on GPU memory
 #####################################
 
 cache_directory = "/home/yujie/.cache/huggingface/hub/"
