@@ -26,4 +26,12 @@ If you use DAOP in your research, please cite the following paper.
   journal={arXiv preprint arXiv:2501.10375},
   year={2024}
 }
+@inproceedings{zhang2025daop,
+  title={DAOP: Data-Aware Offloading and Predictive Pre-Calculation for Efficient MoE Inference},
+  author={Zhang, Yujie and Aggarwal, Shivam and Mitra, Tulika},
+  booktitle={2025 Design, Automation \& Test in Europe Conference (DATE)},
+  pages={1--7},
+  year={2025},
+  organization={IEEE}
+}
 ```
